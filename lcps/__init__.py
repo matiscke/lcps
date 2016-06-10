@@ -13,12 +13,12 @@ from ._astropy_init import *
 # For egg_info test builds to pass, put package imports here.
 if not _ASTROPY_SETUP_:
 #    from .example_mod import *
-    pass 
+    import slidingWindow
   
   
 ######## TEST
-def joke():
-    return (u'Wenn ist das Nunst\u00fcck git und Slotermeyer? Ja! ... '
-            u'Beiherhund das Oder die Flipperwaldt gersput.')
-  
+#def joke():
+#    return (u'Wenn ist das Nunst\u00fcck git und Slotermeyer? Ja! ... '
+#            u'Beiherhund das Oder die Flipperwaldt gersput.')
+#  
 ################
