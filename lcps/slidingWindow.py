@@ -18,7 +18,7 @@ def get_localMedian(photometry, iWinStart, winSize, Nneighb):
     Parameters
     ----------
     photometry : Astropy Table
-        A table with the whole photometric data containing columns "t", "flux"
+        A table with the whole photometric data containing columns "TIME", 'FLUX'
     iWinStart : int
         Index of the first datum in the current window
     winSize : int
@@ -37,7 +37,7 @@ def get_localMedian(photometry, iWinStart, winSize, Nneighb):
     -------
     >>> photometry = Table([[0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.],\
         [1.00,1.01,0.99,0.80,0.75,0.95,0.99,0.99,1.00,0.80,1.01]],\
-        names=["t","flux"], dtype=[float, float])
+        names=['TIME','FLUX'], dtype=[float, float])
     >>> get_localMedian(photometry, 4, 4, Nneighb=1)
     1.0
     """
@@ -52,7 +52,7 @@ def get_localMedian(photometry, iWinStart, winSize, Nneighb):
     neighborhood = vstack([photometry[iMin:iWinStart],\
         photometry[iWinStart + winSize:iMax + 1]])
         
-    return np.median(neighborhood['flux'])
+    return np.median(neighborhood['FLUX'])
 
 
 def findDip(fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.995):
@@ -66,7 +66,7 @@ def findDip(fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.
     Parameters
     ----------
     fluxWindow : Astropy Table
-        A table containing columns "t", "flux"
+        A table containing columns 'TIME', 'FLUX'
     minDur : int
         minimum dip duration in # of data points
     maxDur : int
@@ -89,24 +89,24 @@ def findDip(fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.
     Example
     -------
     >>> fluxWindow = Table([[0.,1.,2.,3.,4.,5.], [1.00,1.01,0.99,0.80,0.75,0.95]],\
-        names=["t","flux"], dtype=[float, float])
+        names=['TIME','FLUX'], dtype=[float, float])
     >>> findDip(fluxWindow, detectionThresh=0.90)
     (5.0, 0.75)
     """
     
     fluxThresh =  detectionThresh*localMedian
-    if len(fluxWindow[fluxWindow["flux"] < fluxThresh]) >= minDur:
+    if len(fluxWindow[fluxWindow['FLUX'] < fluxThresh]) >= minDur:
         # There are low fluxes, check for coherence
             NloFlux = 0
-            for i, datum in enumerate(fluxWindow["flux"]):
+            for i, datum in enumerate(fluxWindow['FLUX']):
                 if datum < fluxThresh:
                     NloFlux += 1
                 else:                    
                     # End of dip, check if length falls between limits
                     if minDur <= NloFlux <= maxDur:
                         # return time of egress and min. flux rel. to median
-                        return fluxWindow["t"][i], \
-                            np.min(fluxWindow["flux"][:i])/localMedian
+                        return fluxWindow['TIME'][i], \
+                            np.min(fluxWindow['FLUX'][:i])/localMedian
                     else:
                         # look for additional dips in the window
                         NloFlux = 0
@@ -131,7 +131,7 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     Parameters
     ----------
     photometry : Astropy Table
-        A table with the whole photometric data containing columns "t", "flux"
+        A table with the whole photometric data containing columns 'TIME', 'FLUX'
     winSize : int
         Size of a window
     stepSize : int
@@ -160,7 +160,7 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     -------
     >>> np.random.seed(99)
     >>> photometry = Table([np.arange(1000.), np.random.normal(1.0, 0.005, 1000)],\
-        names=["t","flux"], dtype=[float, float])
+        names=['TIME','FLUX'], dtype=[float, float])
     >>> dips = dipsearch(photometry)
     """            
                    
@@ -194,17 +194,17 @@ if __name__ == "__main__":
 ##############
 #    #TEST
 #fluxWindow = Table([[0.,1.,2.,3.,4.,5.], [1.00,1.01,0.99,0.80,0.75,0.95]],\
-#        names=["t","flux"], dtype=[float, float])
+#        names=['TIME','FLUX'], dtype=[float, float])
 #t_egress, minFlux = findDip(fluxWindow, detectionThresh=0.90) 
 #print t_egress, minFlux
     
 #photometry = Table([[0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.],\
 #        [1.00,1.01,0.99,0.80,0.75,0.95,0.99,0.99,1.00,0.80,1.01]],\
-#        names=["t","flux"], dtype=[float, float])
+#        names=['TIME','FLUX'], dtype=[float, float])
 #median = get_localMedian(photometry, 4, 4, Nneighb=1)
     
 #np.random.seed(99)  
 #photometry = Table([np.arange(1000.), np.random.normal(1.0, 0.005, 1000)],\
-#        names=["t","flux"], dtype=[float, float]) 
+#        names=['TIME','FLUX'], dtype=[float, float]) 
 #dips = dipsearch(photometry)
 #print dips
