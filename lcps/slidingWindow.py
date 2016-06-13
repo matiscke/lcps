@@ -9,7 +9,7 @@ import numpy as np
 from astropy.table import Table, vstack
 
 
-def get_localMedian(photometry, iWinStart, winSize, Nneighb):
+def get_localMedian(flux, iWinStart, winSize, Nneighb):
     """ Find the local median of fluxes, ignoring the current window.
     
     get_localMedian computes the median flux in the neighboring windows. The fluxes
@@ -17,8 +17,8 @@ def get_localMedian(photometry, iWinStart, winSize, Nneighb):
     
     Parameters
     ----------
-    photometry : Astropy Table
-        A table with the whole photometric data containing columns "TIME", 'FLUX'
+    flux : narray
+        A numpy array with the flux data
     iWinStart : int
         Index of the first datum in the current window
     winSize : int
@@ -35,27 +35,25 @@ def get_localMedian(photometry, iWinStart, winSize, Nneighb):
         
     Example
     -------
-    >>> photometry = Table([[0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.],\
-        [1.00,1.01,0.99,0.80,0.75,0.95,0.99,0.99,1.00,0.80,1.01]],\
-        names=['TIME','FLUX'], dtype=[float, float])
-    >>> get_localMedian(photometry, 4, 4, Nneighb=1)
+    >>> flux = np.array([1.00,1.01,0.99,0.80,0.75,0.95,0.99,0.99,1.00,0.80,1.01])
+    >>> get_localMedian(flux, 4, 4, Nneighb=1)
     1.0
     """
     
     # At the boundaries, expand neighborhood towards center
-    if (iWinStart < winSize) or (iWinStart > len(photometry) - winSize):
+    if (iWinStart < winSize) or (iWinStart > len(flux) - winSize):
         Nneighb *= 2
 
     # construct neighborhood without current window        
     iMin = max(0, iWinStart - Nneighb*winSize)
-    iMax = min(len(photometry), iWinStart + (1 + Nneighb)*winSize)
-    neighborhood = vstack([photometry[iMin:iWinStart],\
-        photometry[iWinStart + winSize:iMax + 1]])
+    iMax = min(len(flux), iWinStart + (1 + Nneighb)*winSize)
+    neighborhood = np.append(flux[iMin:iWinStart],\
+        flux[iWinStart + winSize:iMax + 1])
         
-    return np.median(neighborhood['FLUX'])
+    return np.median(neighborhood)
 
 
-def findDip(fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.995):
+def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.995):
     """ Search for negative deviations, i.e. dips, in an array.
     
     findDip counts the number of entries in fluxWindow that fall short of a 
@@ -65,8 +63,10 @@ def findDip(fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.
     
     Parameters
     ----------
-    fluxWindow : Astropy Table
-        A table containing columns 'TIME', 'FLUX'
+    timeWindow : array
+        Numpy array containing time data
+    fluxWindow : array
+        Numpy array containing flux data
     minDur : int
         minimum dip duration in # of data points
     maxDur : int
@@ -95,18 +95,18 @@ def findDip(fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.
     """
     
     fluxThresh =  detectionThresh*localMedian
-    if len(fluxWindow[fluxWindow['FLUX'] < fluxThresh]) >= minDur:
+    if len(fluxWindow[fluxWindow < fluxThresh]) >= minDur:
         # There are low fluxes, check for coherence
             NloFlux = 0
-            for i, datum in enumerate(fluxWindow['FLUX']):
+            for i, datum in enumerate(fluxWindow):
                 if datum < fluxThresh:
                     NloFlux += 1
                 else:                    
                     # End of dip, check if length falls between limits
                     if minDur <= NloFlux <= maxDur:
                         # return time of egress and min. flux rel. to median
-                        return fluxWindow['TIME'][i], \
-                            np.min(fluxWindow['FLUX'][:i])/localMedian
+                        return timeWindow[i], \
+                            np.min(fluxWindow[:i])/localMedian
                     else:
                         # look for additional dips in the window
                         NloFlux = 0
@@ -170,22 +170,21 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     if winSize <= maxDur:
         raise ValueError('max dip duration greater than or equal window size')
 
+    # extract time and flux from `photometry` table
+    t = np.array(photometry['TIME'])
+    flux = np.array(photometry['FLUX'])
+
     # prepare results
     dips = Table(names=['t_egress','minFlux'], dtype=[float,float])    
     
     # Slide the window  
     prev_t_egress = None
-    for i in xrange(0, len(photometry) - winSize, stepSize):
-        fluxWindow = photometry[i:i + winSize]
-#        localMedian = get_localMedian(photometry, i, winSize, Nneighb)
-        ##########
-        # TEST
-        localMedian = 1.00
-        ##########
-
-        
-        t_egress, minFlux = findDip(fluxWindow, minDur, maxDur, localMedian,\
-            detectionThresh)
+    for i in xrange(0, len(flux) - winSize, stepSize):
+        timeWindow = t[i:i + winSize]
+        fluxWindow = flux[i:i + winSize]
+        localMedian = get_localMedian(flux, i, winSize, Nneighb)
+        t_egress, minFlux = findDip(timeWindow, fluxWindow, minDur, maxDur,\
+            localMedian,detectionThresh)
         if t_egress and (t_egress != prev_t_egress):
             # save any found dips, and only new ones
             dips.add_row([t_egress, minFlux])
