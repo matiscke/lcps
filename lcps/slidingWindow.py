@@ -177,7 +177,13 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     prev_t_egress = None
     for i in xrange(0, len(photometry) - winSize, stepSize):
         fluxWindow = photometry[i:i + winSize]
-        localMedian = get_localMedian(photometry, i, winSize, Nneighb)        
+#        localMedian = get_localMedian(photometry, i, winSize, Nneighb)
+        ##########
+        # TEST
+        localMedian = 1.00
+        ##########
+
+        
         t_egress, minFlux = findDip(fluxWindow, minDur, maxDur, localMedian,\
             detectionThresh)
         if t_egress and (t_egress != prev_t_egress):
@@ -187,9 +193,9 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     return dips
   
   
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
+#if __name__ == "__main__":
+#    import doctest
+#    doctest.testmod()
     
 ##############
 #    #TEST
@@ -203,8 +209,8 @@ if __name__ == "__main__":
 #        names=['TIME','FLUX'], dtype=[float, float])
 #median = get_localMedian(photometry, 4, 4, Nneighb=1)
     
-#np.random.seed(99)  
-#photometry = Table([np.arange(1000.), np.random.normal(1.0, 0.005, 1000)],\
-#        names=['TIME','FLUX'], dtype=[float, float]) 
-#dips = dipsearch(photometry)
-#print dips
+np.random.seed(99)  
+photometry = Table([np.arange(3000.), np.random.normal(1.0, 0.005, 3000)],\
+        names=['TIME','FLUX'], dtype=[float, float]) 
+dips = dipsearch(photometry)
+print dips

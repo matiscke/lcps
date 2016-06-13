@@ -34,6 +34,7 @@ def open_fits(filename):
         return None  
     EPICno = hdulist[1].header['KEPLERID']
     tbdata = hdulist[1].data
+    hdulist.close()
 
     # extract light curve data from hdu
     time = tbdata['TIME']
