@@ -88,9 +88,9 @@ def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detect
         
     Example
     -------
-    >>> fluxWindow = Table([[0.,1.,2.,3.,4.,5.], [1.00,1.01,0.99,0.80,0.75,0.95]],\
-        names=['TIME','FLUX'], dtype=[float, float])
-    >>> findDip(fluxWindow, detectionThresh=0.90)
+    >>> timeWindow = np.array([0.,1.,2.,3.,4.,5.])
+    >>> fluxWindow = np.array([1.00,1.01,0.99,0.80,0.75,0.95])
+    >>> findDip(timeWindow, fluxWindow, detectionThresh=0.90)
     (5.0, 0.75)
     """
     
@@ -115,7 +115,7 @@ def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detect
     return None, None
 
 
-def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,\
+def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,\
         detectionThresh=0.995):
     """ Use a sliding window technique to search for dips in photometric time series.
     
@@ -130,6 +130,8 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     
     Parameters
     ----------
+    EPICno : str
+        EPIC number of the target
     photometry : Astropy Table
         A table with the whole photometric data containing columns 'TIME', 'FLUX'
     winSize : int
@@ -151,6 +153,8 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     -------
     dips : Astropy table
         A table containing parameters of detected dips. Columns:
+        EPICno : str
+            EPIC number of the target
         t_egress : float
             time at end of detected dip 
         minFlux : float
@@ -159,9 +163,10 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     Example
     -------
     >>> np.random.seed(99)
+    >>> EPICno = '9999999'
     >>> photometry = Table([np.arange(1000.), np.random.normal(1.0, 0.005, 1000)],\
         names=['TIME','FLUX'], dtype=[float, float])
-    >>> dips = dipsearch(photometry)
+    >>> dips = dipsearch(EPICno, photometry)
     """            
                    
     # Check if parameters are consistent
@@ -175,7 +180,7 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
     flux = np.array(photometry['FLUX'])
 
     # prepare results
-    dips = Table(names=['t_egress','minFlux'], dtype=[float,float])    
+    dips = Table(names=['EPIC','t_egress','minFlux'], dtype=['S8',float,float])    
     
     # Slide the window  
     prev_t_egress = None
@@ -187,14 +192,14 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
             localMedian,detectionThresh)
         if t_egress and (t_egress != prev_t_egress):
             # save any found dips, and only new ones
-            dips.add_row([t_egress, minFlux])
+            dips.add_row([EPICno, t_egress, minFlux])
             prev_t_egress = t_egress
     return dips
   
   
-#if __name__ == "__main__":
-#    import doctest
-#    doctest.testmod()
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
     
 ##############
 #    #TEST
@@ -208,8 +213,8 @@ def dipsearch(photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, maxDur=5,
 #        names=['TIME','FLUX'], dtype=[float, float])
 #median = get_localMedian(photometry, 4, 4, Nneighb=1)
     
-np.random.seed(99)  
-photometry = Table([np.arange(3000.), np.random.normal(1.0, 0.005, 3000)],\
-        names=['TIME','FLUX'], dtype=[float, float]) 
-dips = dipsearch(photometry)
-print dips
+#np.random.seed(99)  
+#photometry = Table([np.arange(3000.), np.random.normal(1.0, 0.005, 3000)],\
+#        names=['TIME','FLUX'], dtype=[float, float]) 
+#dips = dipsearch(photometry)
+#print dips
