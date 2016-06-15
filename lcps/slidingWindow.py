@@ -180,7 +180,7 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
     flux = np.array(photometry['FLUX'])
 
     # prepare results
-    dips = Table(names=['EPIC','t_egress','minFlux'], dtype=['S8',float,float])    
+    dips = Table(names=['EPIC','t_egress','minFlux'], dtype=['i8',float,float])    
     
     # Slide the window  
     prev_t_egress = None
