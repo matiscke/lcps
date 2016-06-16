@@ -178,22 +178,27 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
     # extract time and flux from `photometry` table
     t = np.array(photometry['TIME'])
     flux = np.array(photometry['FLUX'])
+    
+    # compute mean cadence
+    cadence = (t[-1] - t[0])/len(t)
 
     # prepare results
     dips = Table(names=['EPIC','t_egress','minFlux'], dtype=['i8',float,float])    
     
     # Slide the window  
-    prev_t_egress = None
+    prev_t_egress = 0.
     for i in xrange(0, len(flux) - winSize, stepSize):
         timeWindow = t[i:i + winSize]
         fluxWindow = flux[i:i + winSize]
         localMedian = get_localMedian(flux, i, winSize, Nneighb)
         t_egress, minFlux = findDip(timeWindow, fluxWindow, minDur, maxDur,\
             localMedian,detectionThresh)
-        if t_egress and (t_egress != prev_t_egress):
-            # save any found dips, and only new ones
-            dips.add_row([EPICno, t_egress, minFlux])
-            prev_t_egress = t_egress
+        if t_egress:
+            # check if detected dip is a new one
+            if (t_egress - prev_t_egress) > 2*cadence:
+                # save any found dips
+                dips.add_row([EPICno, t_egress, minFlux])
+                prev_t_egress = t_egress
     return dips
   
   

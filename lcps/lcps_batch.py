@@ -58,7 +58,7 @@ def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
     >>> path = './tests/'
     >>> candidates = batchjob(path)
     INFO: Scanning target 1/1: EPIC 205919993 [__main__]
-    INFO: 12 transit candidates found. [__main__]
+    INFO: 12 transit candidates found in 1 light curves. [__main__]
     """
     filelist = sorted([file for file in os.listdir(path) if file.endswith('fits')])
     candidates = Table(names=('EPIC','t_egress','minFlux'),\
@@ -99,11 +99,11 @@ if __name__ == "__main__":
         help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
     parser.add_argument('--Nneighb', default=1,\
         help='Number of neighboring windows to be considered for the local median', type=int)
-    parser.add_argument('--minDur', default=5,\
+    parser.add_argument('--minDur', default=3,\
         help='minimum dip duration in # of data points', type=int)
     parser.add_argument('--maxDur', default=99,\
         help='maximum dip duration in # of data points', type=int)
-    parser.add_argument('--detectionThresh', default=0.995,\
+    parser.add_argument('--detectionThresh', default=0.99,\
         help='fraction of flux below which a dip is registered', type=float)
     args = parser.parse_args()
     
