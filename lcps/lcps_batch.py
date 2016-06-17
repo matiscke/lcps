@@ -7,7 +7,6 @@ Created on Tue Jun 14 16:14:43 2016
 
 import os
 from astropy.table import Table, vstack
-from astropy.io import ascii
 from lcps_io import open_fits
 from astropy import log
 import slidingWindow
@@ -38,9 +37,9 @@ def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
     stepSize : int
         steps per slide (Default = 1, i.e. slide one data point per iteration)
     Nneighb : int
-        Number of neighboring windows to be considered for the local median (At
-        the boundaries of the time series, the considered data extends to the
-        beginning or end of the array, respectively)    
+        Number of neighboring windows per side to be considered for the local 
+        median (At the boundaries of the time series, the considered data
+        extends to the beginning or end of the array, respectively)    
     minDur : int
         minimum dip duration in # of data points
     maxDur : int
@@ -73,9 +72,18 @@ def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
         dips = slidingWindow.dipsearch(EPICno, photometry, winSize, stepSize,\
             Nneighb, minDur, maxDur, detectionThresh)
         candidates = vstack([candidates, dips], join_type='outer')
+
+        # Every 50th iteration, write intermediate results to file
+        if i % 50 == 0:
+            lcps_output(candidates, logfilename + '.part')
         
     # write transit candidates to file
     lcps_output(candidates, logfilename)
+    try:
+        os.remove(logfilename + '.part')
+    except OSError:
+        pass
+    
     log.info('{} transit candidates found in {} light curves.'.format(\
         len(candidates), len(set(candidates['EPIC']))))
     return candidates
@@ -93,17 +101,17 @@ if __name__ == "__main__":
         help='path containing light curve (FITS) files', type=str)
     parser.add_argument('--logfilename', default='./dips.log',\
         help='name of log file that will contain transit candidates', type=str)  
-    parser.add_argument('--winSize', default=100,\
+    parser.add_argument('--winSize', default=50,\
         help='Size of a sliding window', type=int)
-    parser.add_argument('--stepSize', default=1,\
+    parser.add_argument('--stepSize', default=10,\
         help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
     parser.add_argument('--Nneighb', default=1,\
         help='Number of neighboring windows to be considered for the local median', type=int)
-    parser.add_argument('--minDur', default=3,\
+    parser.add_argument('--minDur', default=2,\
         help='minimum dip duration in # of data points', type=int)
-    parser.add_argument('--maxDur', default=99,\
+    parser.add_argument('--maxDur', default=49,\
         help='maximum dip duration in # of data points', type=int)
-    parser.add_argument('--detectionThresh', default=0.99,\
+    parser.add_argument('--detectionThresh', default=0.98,\
         help='fraction of flux below which a dip is registered', type=float)
     args = parser.parse_args()
     

@@ -139,9 +139,9 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
     stepSize : int
         steps per slide (Default = 1, i.e. slide one data point per iteration).
     Nneighb : int
-        Number of neighboring windows to be considered for the local median (At
-        the boundaries of the time series, the considered data extends to the
-        beginning or end of the array, respectively)    
+        Number of neighboring windows per side to be considered for the local 
+        median (At the boundaries of the time series, the considered data
+        extends to the beginning or end of the array, respectively)    
     minDur : int
         minimum dip duration in # of data points
     maxDur : int
