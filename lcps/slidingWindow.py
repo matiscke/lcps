@@ -6,14 +6,14 @@ Created on Thu Jun  9 18:10:47 2016
 """
 
 import numpy as np
-from astropy.table import Table, vstack
-
+from astropy.table import Table
+from astropy.stats import mad_std
 
 def get_localMedian(flux, iWinStart, winSize, Nneighb):
-    """ Find the local median of fluxes, ignoring the current window.
+    """ Find the local median and MAD of fluxes, ignoring the current window.
     
-    get_localMedian computes the median flux in the neighboring windows. The fluxes
-    in the current window is ignored.
+    get_localMedian computes the median flux and the median absolute deviation
+    (MAD) in the neighboring windows. The flux in the current window is ignored.
     
     Parameters
     ----------
@@ -32,12 +32,14 @@ def get_localMedian(flux, iWinStart, winSize, Nneighb):
     -------
     localMedian : float
         Median of the flux in the windows neighboring the current one
-        
+    MAD : float
+        median absolute deviation of the current window's neighborhood
+    
     Example
     -------
     >>> flux = np.array([1.00,1.01,0.99,0.80,0.75,0.95,0.99,0.99,1.00,0.80,1.01])
     >>> get_localMedian(flux, 4, 4, Nneighb=1)
-    1.0
+    (1.0, 0.010000000000000009)
     """
     
     # At the boundaries, expand neighborhood towards center
@@ -49,11 +51,15 @@ def get_localMedian(flux, iWinStart, winSize, Nneighb):
     iMax = min(len(flux), iWinStart + (1 + Nneighb)*winSize)
     neighborhood = np.append(flux[iMin:iWinStart],\
         flux[iWinStart + winSize:iMax + 1])
-        
-    return np.median(neighborhood)
+    
+    # compute median and MAD of neighborhood
+    localMedian = np.median(neighborhood)
+    MAD = np.median(abs(neighborhood - localMedian))
+    return localMedian, MAD
 
 
-def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detectionThresh=0.995):
+def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00,\
+        localMAD=0.01, detectionThresh=0.995):
     """ Search for negative deviations, i.e. dips, in an array.
     
     findDip counts the number of entries in fluxWindow that fall short of a 
@@ -73,6 +79,8 @@ def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detect
         maximum dip duration in # of data points
     localMedian : float
         local median flux
+    MAD : float
+        median absolute deviation of the current window's neighborhood
     detectionThresh : float
         fraction of flux, below which a deviation is registered
     
@@ -93,13 +101,14 @@ def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00, detect
     >>> findDip(timeWindow, fluxWindow, detectionThresh=0.90)
     (5.0, 0.75)
     """
-    
-    fluxThresh =  detectionThresh*localMedian
+    # compute flux threshold, ensure that threshold lies below local MAD
+    fluxThresh = min(detectionThresh*localMedian, localMedian - localMAD)    
+
     if len(fluxWindow[fluxWindow < fluxThresh]) >= minDur:
         # There are low fluxes, check for coherence
             NloFlux = 0
-            for i, datum in enumerate(fluxWindow):
-                if datum < fluxThresh:
+            for i, flux in enumerate(fluxWindow):
+                if flux < fluxThresh:
                     NloFlux += 1
                 else:                    
                     # End of dip, check if length falls between limits
@@ -190,9 +199,9 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
     for i in xrange(0, len(flux) - winSize, stepSize):
         timeWindow = t[i:i + winSize]
         fluxWindow = flux[i:i + winSize]
-        localMedian = get_localMedian(flux, i, winSize, Nneighb)
+        localMedian, localMAD = get_localMedian(flux, i, winSize, Nneighb)
         t_egress, minFlux = findDip(timeWindow, fluxWindow, minDur, maxDur,\
-            localMedian,detectionThresh)
+            localMedian, localMAD, detectionThresh)
         if t_egress:
             # check if detected dip is a new one
             if (t_egress - prev_t_egress) > 2*cadence:
@@ -219,7 +228,18 @@ if __name__ == "__main__":
 #median = get_localMedian(photometry, 4, 4, Nneighb=1)
     
 #np.random.seed(99)  
+#EPICno = '9999999'
 #photometry = Table([np.arange(3000.), np.random.normal(1.0, 0.005, 3000)],\
 #        names=['TIME','FLUX'], dtype=[float, float]) 
-#dips = dipsearch(photometry)
+#dips = dipsearch(EPICno,photometry)
 #print dips
+ 
+## profile get_localMedian():
+#np.random.seed(5)
+#flux = np.random.normal(1., 0.1, 1000)
+#iWinStart = 333
+#winSize = 200
+#Nneighb = 1
+#for i in xrange(1000):
+#    localMedian, MAD = get_localMedian(flux, iWinStart, winSize, Nneighb)  
+#print localMedian, MAD
