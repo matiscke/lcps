@@ -11,16 +11,16 @@ from lcps_io import open_fits
 from astropy import log
 import slidingWindow
 
-def lcps_output(logtable, logfilename):
+def lcps_output(logtable, logfile):
     """ Write table with transit candidates to file."""
-#    if os.path.isfile(logfilename):
+#    if os.path.isfile(logfile):
 #        # append to existing logfile 
-#        oldlog = ascii.read(logfilename, format='csv')
+#        oldlog = ascii.read(logfile, format='csv')
 #        logtable = vstack([oldlog, logtable])
-    logtable.write(logfilename, format='csv')
+    logtable.write(logfile, format='csv')
         
 
-def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
+def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
         Nneighb=1, minDur=2, maxDur=5, detectionThresh=0.995):
     """ Check all light curve files in a folder for transit signatures.
     
@@ -32,7 +32,7 @@ def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
     ----------
     path : str
         folder which is scanned for fits files
-    logfilename : str
+    logfile : str
         output file for transit candidates
     winSize : int
         Size of a sliding window
@@ -88,12 +88,12 @@ def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
         
         # Every 50th iteration, write intermediate results to file
         if i % 50 == 0:
-            lcps_output(candidates, logfilename + '.part')
+            lcps_output(candidates, logfile + '.part')
         
     # write transit candidates to file
-    lcps_output(candidates, logfilename)
+    lcps_output(candidates, logfile)
     try:
-        os.remove(logfilename + '.part')
+        os.remove(logfile + '.part')
     except OSError:
         pass
     
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         description='pre-select light curves with possible transit signatures')
     parser.add_argument('path',\
         help='path containing light curve (FITS) files', type=str)
-    parser.add_argument('--logfilename', default='./dips.log',\
+    parser.add_argument('--logfile', default='./dips.log',\
         help='name of log file that will contain transit candidates', type=str)  
     parser.add_argument('--winSize', default=50,\
         help='Size of a sliding window', type=int)
@@ -128,7 +128,7 @@ if __name__ == "__main__":
         help='fraction of flux below which a dip is registered', type=float)
     args = parser.parse_args()
     
-    batchjob(args.path, args.logfilename, args.winSize, args.stepSize,\
+    batchjob(args.path, args.logfile, args.winSize, args.stepSize,\
         args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
 
     
