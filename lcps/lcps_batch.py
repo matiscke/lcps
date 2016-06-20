@@ -21,7 +21,7 @@ def lcps_output(logtable, logfilename):
         
 
 def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
-        Nneighb=2, minDur=2, maxDur=5, detectionThresh=0.995):
+        Nneighb=1, minDur=2, maxDur=5, detectionThresh=0.995):
     """ Check all light curve files in a folder for transit signatures.
     
     batchjob forwards all FITS files in the `path` to the dip search of the 
@@ -32,6 +32,8 @@ def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
     ----------
     path : str
         folder which is scanned for fits files
+    logfilename : str
+        output file for transit candidates
     winSize : int
         Size of a sliding window
     stepSize : int
@@ -72,7 +74,18 @@ def batchjob(path, logfilename='./dips.log', winSize=10, stepSize=1,\
         dips = slidingWindow.dipsearch(EPICno, photometry, winSize, stepSize,\
             Nneighb, minDur, maxDur, detectionThresh)
         candidates = vstack([candidates, dips], join_type='outer')
-
+        
+        ####### DEBUGGING
+        if dips:
+            print 'transit-like event detected'
+        
+        #####################################
+        
+        
+        
+        
+        
+        
         # Every 50th iteration, write intermediate results to file
         if i % 50 == 0:
             lcps_output(candidates, logfilename + '.part')
@@ -119,9 +132,16 @@ if __name__ == "__main__":
         args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
 
     
-#### DEBUGGING
-#path = '/run/media/mschleck/scratch2/KeplerData/DADS_20160517/'
-#logfile = '/run/media/mschleck/scratch2/KeplerData/DADS_20160517/lcps.log'
-#candidates = batchjob(path, logfile)
+##### DEBUGGING
+#path = '/run/media/mschleck/scratch2/KeplerData/C7/'
+#logfile = '/run/media/mschleck/scratch2/KeplerData/C7/lcps_debugging01.log'
+#winSize = 500
+#stepSize = 10
+#Nneighb=1
+#minDur = 10
+#maxDur = 499
+#detectionThresh = 0.96
+#candidates = batchjob(path, logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
 #print candidates
+
 

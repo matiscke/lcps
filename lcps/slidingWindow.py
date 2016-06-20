@@ -7,7 +7,6 @@ Created on Thu Jun  9 18:10:47 2016
 
 import numpy as np
 from astropy.table import Table
-from astropy.stats import mad_std
 
 def get_localMedian(flux, iWinStart, winSize, Nneighb):
     """ Find the local median and MAD of fluxes, ignoring the current window.
@@ -188,8 +187,9 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
     t = np.array(photometry['TIME'])
     flux = np.array(photometry['FLUX'])
     
-    # compute mean cadence
+    # compute min dip duration in days
     cadence = (t[-1] - t[0])/len(t)
+    t_minDur = minDur*cadence
 
     # prepare results
     dips = Table(names=['EPIC','t_egress','minFlux'], dtype=['i8',float,float])    
@@ -204,7 +204,7 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
             localMedian, localMAD, detectionThresh)
         if t_egress:
             # check if detected dip is a new one
-            if (t_egress - prev_t_egress) > 2*cadence:
+            if (t_egress - prev_t_egress) > t_minDur:
                 # save any found dips
                 dips.add_row([EPICno, t_egress, minFlux])
                 prev_t_egress = t_egress
