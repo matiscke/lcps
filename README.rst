@@ -1,5 +1,5 @@
-lcps
-=====
+lcps (light curve pre-selection)
+================================
 
 **A tool to search for dips in photometric time series**
 
@@ -16,5 +16,5 @@ License
 
 Copyright 2016 Martin Schlecker
 
-emcee is free software made available under the MIT License. For details see
+lcps is free software made available under the MIT License. For details see
 the LICENSE file.
