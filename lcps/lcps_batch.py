@@ -11,13 +11,22 @@ from lcps_io import open_fits
 from astropy import log
 import slidingWindow
 
-def lcps_output(logtable, logfile):
+def lcps_output(logtable, logfile, winSize, stepSize, Nneighb, minDur, maxDur,\
+    detectionThresh):
     """ Write table with transit candidates to file."""
 #    if os.path.isfile(logfile):
 #        # append to existing logfile 
 #        oldlog = ascii.read(logfile, format='csv')
 #        logtable = vstack([oldlog, logtable])
     logtable.write(logfile, format='csv')
+    
+    # write lcps parameters to beginning of file
+    prepends = '#winSize={}\n#stepSize={}\n#Nneighb={}\n#minDur={}\n#maxDur={}\n#detectionThresh={}\n#'.format(\
+    winSize, stepSize, Nneighb, minDur, maxDur, detectionThresh)
+    with open(logfile, 'r+') as f:
+        content = f.read()
+        f.seek(0,0)
+        f.write(prepends + '\n' + content)
         
 
 def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
@@ -64,6 +73,7 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
     filelist = sorted([file for file in os.listdir(path) if file.endswith('fits')])
     candidates = Table(names=('EPIC','t_egress','minFlux'),\
         dtype=['i8',float,float])
+    nodips = 0
     for i, file in enumerate(filelist):
         # extract photometry from fits file
         EPICno, photometry = open_fits(path + file)
@@ -77,7 +87,8 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
         
         ####### DEBUGGING
         if dips:
-            print 'transit-like event detected'
+            nodips+=1
+            print '{} dip events detected'.format(nodips)
         
         #####################################
         
@@ -88,10 +99,12 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
         
         # Every 50th iteration, write intermediate results to file
         if i % 50 == 0:
-            lcps_output(candidates, logfile + '.part')
+            lcps_output(candidates, logfile + '.part', winSize, stepSize, \
+            Nneighb, minDur, maxDur, detectionThresh)
         
     # write transit candidates to file
-    lcps_output(candidates, logfile)
+    lcps_output(candidates, logfile, winSize, stepSize, Nneighb, minDur, maxDur,\
+    detectionThresh)
     try:
         os.remove(logfile + '.part')
     except OSError:
@@ -102,46 +115,47 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
     return candidates
     
     
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
-    
-    # parse parameters
-    import argparse
-    parser = argparse.ArgumentParser(\
-        description='pre-select light curves with possible transit signatures')
-    parser.add_argument('path',\
-        help='path containing light curve (FITS) files', type=str)
-    parser.add_argument('--logfile', default='./dips.log',\
-        help='name of log file that will contain transit candidates', type=str)  
-    parser.add_argument('--winSize', default=50,\
-        help='Size of a sliding window', type=int)
-    parser.add_argument('--stepSize', default=10,\
-        help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
-    parser.add_argument('--Nneighb', default=1,\
-        help='Number of neighboring windows to be considered for the local median', type=int)
-    parser.add_argument('--minDur', default=2,\
-        help='minimum dip duration in # of data points', type=int)
-    parser.add_argument('--maxDur', default=49,\
-        help='maximum dip duration in # of data points', type=int)
-    parser.add_argument('--detectionThresh', default=0.98,\
-        help='fraction of flux below which a dip is registered', type=float)
-    args = parser.parse_args()
-    
-    batchjob(args.path, args.logfile, args.winSize, args.stepSize,\
-        args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
+#if __name__ == "__main__":
+#    import doctest
+#    doctest.testmod()
+#    
+#    # parse parameters
+#    import argparse
+#    parser = argparse.ArgumentParser(\
+#        description='pre-select light curves with possible transit signatures')
+#    parser.add_argument('path',\
+#        help='path containing light curve (FITS) files', type=str)
+#    parser.add_argument('--logfile', default='./dips.log',\
+#        help='name of log file that will contain transit candidates', type=str)  
+#    parser.add_argument('--winSize', default=50,\
+#        help='Size of a sliding window', type=int)
+#    parser.add_argument('--stepSize', default=10,\
+#        help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
+#    parser.add_argument('--Nneighb', default=1,\
+#        help='Number of neighboring windows to be considered for the local median', type=int)
+#    parser.add_argument('--minDur', default=2,\
+#        help='minimum dip duration in # of data points', type=int)
+#    parser.add_argument('--maxDur', default=49,\
+#        help='maximum dip duration in # of data points', type=int)
+#    parser.add_argument('--detectionThresh', default=0.98,\
+#        help='fraction of flux below which a dip is registered', type=float)
+#    args = parser.parse_args()
+#    
+#    batchjob(args.path, args.logfile, args.winSize, args.stepSize,\
+#        args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
 
     
-##### DEBUGGING
-#path = '/run/media/mschleck/scratch2/KeplerData/C7/'
-#logfile = '/run/media/mschleck/scratch2/KeplerData/C7/lcps_debugging01.log'
-#winSize = 500
-#stepSize = 10
-#Nneighb=1
-#minDur = 10
-#maxDur = 499
-#detectionThresh = 0.96
-#candidates = batchjob(path, logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
-#print candidates
+#### DEBUGGING 
+# (comment out above block for debugging)
+path = '/run/media/mschleck/scratch2/KeplerData/C8/'
+logfile = '/run/media/mschleck/scratch2/KeplerData/C8/lcps_K2C8_debugging01.log'
+winSize = 200
+stepSize = 10
+Nneighb=1
+minDur = 30
+maxDur = 199
+detectionThresh = 0.90
+candidates = batchjob(path, logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
+print candidates
 
 
