@@ -84,18 +84,9 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
         dips = slidingWindow.dipsearch(EPICno, photometry, winSize, stepSize,\
             Nneighb, minDur, maxDur, detectionThresh)
         candidates = vstack([candidates, dips], join_type='outer')
-        
-        ####### DEBUGGING
         if dips:
             nodips+=1
-            print '{} dip events detected'.format(nodips)
-        
-        #####################################
-        
-        
-        
-        
-        
+            log.info('{} dip events detected'.format(nodips))
         
         # Every 50th iteration, write intermediate results to file
         if i % 50 == 0:
@@ -115,47 +106,47 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
     return candidates
     
     
-#if __name__ == "__main__":
-#    import doctest
-#    doctest.testmod()
-#    
-#    # parse parameters
-#    import argparse
-#    parser = argparse.ArgumentParser(\
-#        description='pre-select light curves with possible transit signatures')
-#    parser.add_argument('path',\
-#        help='path containing light curve (FITS) files', type=str)
-#    parser.add_argument('--logfile', default='./dips.log',\
-#        help='name of log file that will contain transit candidates', type=str)  
-#    parser.add_argument('--winSize', default=50,\
-#        help='Size of a sliding window', type=int)
-#    parser.add_argument('--stepSize', default=10,\
-#        help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
-#    parser.add_argument('--Nneighb', default=1,\
-#        help='Number of neighboring windows to be considered for the local median', type=int)
-#    parser.add_argument('--minDur', default=2,\
-#        help='minimum dip duration in # of data points', type=int)
-#    parser.add_argument('--maxDur', default=49,\
-#        help='maximum dip duration in # of data points', type=int)
-#    parser.add_argument('--detectionThresh', default=0.98,\
-#        help='fraction of flux below which a dip is registered', type=float)
-#    args = parser.parse_args()
-#    
-#    batchjob(args.path, args.logfile, args.winSize, args.stepSize,\
-#        args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+    
+    # parse parameters
+    import argparse
+    parser = argparse.ArgumentParser(\
+        description='pre-select light curves with possible transit signatures')
+    parser.add_argument('path',\
+        help='path containing light curve (FITS) files', type=str)
+    parser.add_argument('--logfile', default='./dips.log',\
+        help='name of log file that will contain transit candidates', type=str)  
+    parser.add_argument('--winSize', default=50,\
+        help='Size of a sliding window', type=int)
+    parser.add_argument('--stepSize', default=10,\
+        help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
+    parser.add_argument('--Nneighb', default=1,\
+        help='Number of neighboring windows to be considered for the local median', type=int)
+    parser.add_argument('--minDur', default=2,\
+        help='minimum dip duration in # of data points', type=int)
+    parser.add_argument('--maxDur', default=49,\
+        help='maximum dip duration in # of data points', type=int)
+    parser.add_argument('--detectionThresh', default=0.98,\
+        help='fraction of flux below which a dip is registered', type=float)
+    args = parser.parse_args()
+    
+    batchjob(args.path, args.logfile, args.winSize, args.stepSize,\
+        args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
 
     
-#### DEBUGGING 
-# (comment out above block for debugging)
-path = '/run/media/mschleck/scratch2/KeplerData/C8/'
-logfile = '/run/media/mschleck/scratch2/KeplerData/C8/lcps_K2C8_debugging01.log'
-winSize = 200
-stepSize = 10
-Nneighb=1
-minDur = 30
-maxDur = 199
-detectionThresh = 0.90
-candidates = batchjob(path, logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
-print candidates
+##### DEBUGGING 
+## (comment out above block for debugging)
+#path = '/run/media/mschleck/scratch2/KeplerData/C8/'
+#logfile = '/run/media/mschleck/scratch2/KeplerData/C8/lcps_K2C8_short_02.log'
+#winSize = 20
+#stepSize = 5
+#Nneighb=1
+#minDur = 4
+#maxDur = 19
+#detectionThresh = 0.95
+#candidates = batchjob(path, logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
+#print candidates
 
 
