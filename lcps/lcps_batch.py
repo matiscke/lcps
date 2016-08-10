@@ -103,7 +103,6 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
     
     log.info('{} transit candidates found in {} light curves.'.format(\
         len(candidates), len(set(candidates['EPIC']))))
-    return candidates
     
     
 if __name__ == "__main__":
