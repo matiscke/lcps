@@ -14,11 +14,6 @@ from ._astropy_init import *
 if not _ASTROPY_SETUP_:
 #    from .example_mod import *
     import slidingWindow
+    import lcps_batch
+    import lcps_io
   
-  
-######## TEST
-#def joke():
-#    return (u'Wenn ist das Nunst\u00fcck git und Slotermeyer? Ja! ... '
-#            u'Beiherhund das Oder die Flipperwaldt gersput.')
-#  
-################

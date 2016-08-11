@@ -66,8 +66,9 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
     Example
     -------
     >>> path = './tests/'
-    >>> candidates = batchjob(path)
+    >>> batchjob(path)
     INFO: Scanning target 1/1: EPIC 205919993 [__main__]
+    INFO: 1 dip events detected [__main__]
     INFO: 12 transit candidates found in 1 light curves. [__main__]
     """
     filelist = sorted([file for file in os.listdir(path) if file.endswith('fits')])

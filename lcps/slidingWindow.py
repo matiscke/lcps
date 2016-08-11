@@ -215,31 +215,3 @@ if __name__ == "__main__":
     import doctest
     doctest.testmod()
     
-##############
-#    #TEST
-#fluxWindow = Table([[0.,1.,2.,3.,4.,5.], [1.00,1.01,0.99,0.80,0.75,0.95]],\
-#        names=['TIME','FLUX'], dtype=[float, float])
-#t_egress, minFlux = findDip(fluxWindow, detectionThresh=0.90) 
-#print t_egress, minFlux
-    
-#photometry = Table([[0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.],\
-#        [1.00,1.01,0.99,0.80,0.75,0.95,0.99,0.99,1.00,0.80,1.01]],\
-#        names=['TIME','FLUX'], dtype=[float, float])
-#median = get_localMedian(photometry, 4, 4, Nneighb=1)
-    
-#np.random.seed(99)  
-#EPICno = '9999999'
-#photometry = Table([np.arange(3000.), np.random.normal(1.0, 0.005, 3000)],\
-#        names=['TIME','FLUX'], dtype=[float, float]) 
-#dips = dipsearch(EPICno,photometry)
-#print dips
- 
-## profile get_localMedian():
-#np.random.seed(5)
-#flux = np.random.normal(1., 0.1, 1000)
-#iWinStart = 333
-#winSize = 200
-#Nneighb = 1
-#for i in xrange(1000):
-#    localMedian, MAD = get_localMedian(flux, iWinStart, winSize, Nneighb)  
-#print localMedian, MAD

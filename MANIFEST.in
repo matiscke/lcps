@@ -38,3 +38,6 @@ prune astropy_helpers/astropy_helpers/tests
 
 
 global-exclude *.pyc *.o
+
+# lcps related files
+include lcps/tests/*
