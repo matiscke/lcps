@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 13 11:22:51 2016
+""" Auxiliary functions for light curve file handling. 
 
-@author: mschleck
+For now, contains only a function "open_fits" to extract the Kepler PDCSAP 
+light curve from a FITS file.
 """
+
 import numpy as np
 from astropy.table import Table
 from astropy.io import fits

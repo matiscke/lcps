@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 14 16:14:43 2016
+""" Batch processing of light curve files.
 
-@author: mschleck
+This module contains routines to process large number of light curve files in
+FITS format. It includes an argument parser to run an lcps batch job from the
+shell.
 """
 
 import os

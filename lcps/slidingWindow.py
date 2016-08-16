@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jun  9 18:10:47 2016
+""" Core algorithms of the lcps package.
 
-@author: mschleck
+This module contains the dip search routine that is based on a "sliding window"
+technique, as well as additional helper functions. 
 """
 
 import numpy as np
