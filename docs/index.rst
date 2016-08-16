@@ -1,5 +1,5 @@
 lcps: *light curve pre-selection*
-====
+=================================
 
 
 Introduction
