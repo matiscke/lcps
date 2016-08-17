@@ -85,9 +85,6 @@ def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00,\
     
     Returns
     -------
-#    dip : bool
-#        True, if dip of length between [minDur, maxDur] detected
-    
     t_egress : float
         time at end of detected dip 
     minFlux : float
