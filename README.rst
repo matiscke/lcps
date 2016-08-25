@@ -13,7 +13,7 @@ python lcps_batch.py /KeplerData/C7/ --logfile /KeplerData/C7/lcps_long+deep01.l
 
 Documentation
 -------------
-A full documentation of lcps is available under `<lcps.readthedocs.io>`_.
+A full documentation of lcps is available under `<http://lcps.readthedocs.io>`_.
 
 
 License
