@@ -11,14 +11,6 @@ Its main purpose is to restrict large sets of light curves to a number of files 
 
 lcps uses a **sliding window** technique to compare a section of flux time series with its surroundings. A dip is detected if the flux within the window is lower than a threshold fraction of the surrounding fluxes. 
 
-Content
--------
-.. toctree::
-  :maxdepth: 2
-  
-  index.rst
-  usage.rst
-
 
 Installation
 ------------
@@ -38,6 +30,14 @@ Use the lcps_batch module to run lcps on a set of Kepler long cadence photometry
    >>> logfile = 'K2C8/lcps.log'  # dip detections are written to this file  
    >>> lcps.lcps_batch.batchjob(path, logfile)
  
+Usage
+-----
+.. toctree::
+  :maxdepth: 2
+  
+  usage.rst
+  
+
 Copyright and License
 ---------------------
 Copyright 2016 Martin Schlecker
