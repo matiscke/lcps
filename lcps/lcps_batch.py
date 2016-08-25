@@ -174,4 +174,3 @@ if __name__ == "__main__":
 #candidates = batchjob(path,logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
 #print candidates
 
-

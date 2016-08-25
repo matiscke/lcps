@@ -11,9 +11,13 @@ Usage Example
 python lcps_batch.py /KeplerData/C7/ --logfile /KeplerData/C7/lcps_long+deep01.log --winSize 700 --stepSize 20 --minDur 20 --maxDur 698 --detectionThresh 0.90
 
 
+Documentation
+-------------
+A full documentation of lcps is available under `<lcps.readthedocs.io>`_.
+
+
 License
 -------
-
 Copyright 2016 Martin Schlecker
 
 lcps is free software made available under the MIT License. For details see
