@@ -94,14 +94,15 @@ def open_k2sff(filename):
     >>> filename, photometry = open_k2sff(filename)
     """
     with open(filename, 'r') as infile:
-        photometry = Table(names = ('TIME', 'FLUX'))
-        lines = infile.readlines()  
-        for line in lines[1:]:
+        lines = infile.readlines() 
+        phot = np.zeros([len(lines) - 1, 2])
+        for i, line in enumerate(lines[1:]):
             # strip trailing comma and '\n' and save to a table
             line = line.rstrip(',\n')
             line = line.split(',')
-            photometry.add_row(line)
-
+            phot[i][:] = line
+        photometry = Table(phot, names = ('TIME', 'FLUX'))    
+    
     # remove nans
     photometry = photometry[~np.isnan(photometry['FLUX'])]   
     return filename.split('/')[-1], photometry

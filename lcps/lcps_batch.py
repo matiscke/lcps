@@ -123,53 +123,55 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
         len(candidates), len(set(candidates['EPIC']))))
     
     
-#if __name__ == "__main__":
-#    import doctest
-#    doctest.testmod()
-#    
-#    # parse parameters
-#    import argparse
-#    parser = argparse.ArgumentParser(\
-#        description='pre-select light curves with possible transit signatures')
-#    parser.add_argument('path',\
-#        help='path containing light curve (FITS) files', type=str)
-#    parser.add_argument('--logfile', default='./dips.log',\
-#        help='name of log file that will contain dips', type=str)  
-#    parser.add_argument('--winSize', default=50,\
-#        help='Size of a sliding window', type=int)
-#    parser.add_argument('--stepSize', default=10,\
-#        help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
-#    parser.add_argument('--Nneighb', default=1,\
-#        help='Number of neighboring windows to be considered for the local median', type=int)
-#    parser.add_argument('--minDur', default=2,\
-#        help='minimum dip duration in # of data points', type=int)
-#    parser.add_argument('--maxDur', default=49,\
-#        help='maximum dip duration in # of data points', type=int)
-#    parser.add_argument('--detectionThresh', default=0.98,\
-#        help='fraction of flux below which a dip is registered', type=float)
-#    args = parser.parse_args()
-#    
-#    batchjob(args.path, args.logfile, args.winSize, args.stepSize,\
-#        args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+    
+    # parse parameters
+    import argparse
+    parser = argparse.ArgumentParser(\
+        description='pre-select light curves with possible transit signatures')
+    parser.add_argument('path',\
+        help='path containing light curve (FITS or ascii) files', type=str)
+    parser.add_argument('--logfile', default='./dips.log',\
+        help='name of log file that will contain dips', type=str)  
+    parser.add_argument('--winSize', default=50,\
+        help='Size of a sliding window', type=int)
+    parser.add_argument('--stepSize', default=10,\
+        help='steps per slide (Default = 1, i.e. slide one data point per iteration)', type=int)
+    parser.add_argument('--Nneighb', default=1,\
+        help='Number of neighboring windows to be considered for the local median', type=int)
+    parser.add_argument('--minDur', default=2,\
+        help='minimum dip duration in # of data points', type=int)
+    parser.add_argument('--maxDur', default=49,\
+        help='maximum dip duration in # of data points', type=int)
+    parser.add_argument('--detectionThresh', default=0.98,\
+        help='fraction of flux below which a dip is registered', type=float)
+    args = parser.parse_args()
+    
+    batchjob(args.path, args.logfile, args.winSize, args.stepSize,\
+        args.Nneighb, args.minDur, args.maxDur, args.detectionThresh)
 
     
 #### DEBUGGING 
 # (comment out above block for debugging)
 #path = '/run/media/mschleck/scratch2/KeplerData/C8/'
 #logfile = '/run/media/mschleck/scratch2/KeplerData/C8/lcps_K2C8_short_02.log'
-path = '/home/mschleck/lcps/testlightcurves/'
-logfile = '/home/mschleck/lcps/testlightcurves/testlog.log'
-winSize = 20
-stepSize = 5
-Nneighb=1
-minDur = 4
-maxDur = 19
-detectionThresh = 0.95
+#path = '/home/mschleck/lcps/testlightcurves/'
+#logfile = '/home/mschleck/lcps/testlightcurves/testlog.log'
 
-import doctest
-doctest.testmod()
-
-candidates = batchjob(path,logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
-print candidates
+#path = '/run/media/mschleck/scratch2/Lightcurves/K2/Camp8/'
+##path = '/run/media/mschleck/scratch2/__TEST/' 
+#logfile = '/home/mschleck/lcps/testlightcurves/K2C8k2sff_0xxx.log'
+#
+#winSize = 20
+#stepSize = 4
+#Nneighb= 1
+#minDur = 3
+#maxDur = 19
+#detectionThresh = 0.99
+#
+#candidates = batchjob(path,logfile,winSize,stepSize,Nneighb,minDur,maxDur,detectionThresh)
+#print candidates
 
 
