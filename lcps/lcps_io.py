@@ -7,7 +7,7 @@ light curve from a FITS file.
 
 import numpy as np
 from astropy.table import Table
-from astropy.io import fits
+from astropy.io import fits, ascii
 import warnings
 from astropy.utils.exceptions import AstropyUserWarning
 
@@ -51,8 +51,62 @@ def open_fits(filename):
     # remove nans
     photometry = photometry[~np.isnan(photometry['FLUX'])]
     return EPICno, photometry
-  
-  
+
+def open_csv(filename):
+    """ Open a light curve file in csv format and extract from it flux time
+    series.
+    
+    Parameters
+    ----------
+    filename : str
+        file name of the ascii file containing the photometry
+    
+    Returns
+    -------
+    filename : str
+        The filename serves as a unique identifier for the object
+    photometry : Astropy table
+        Columns are named after the file header and contain time, flux
+    """
+    photometry = ascii.read(filename, format='csv')
+    return filename, photometry
+ 
+def open_k2sff(filename):
+    """ Extract a light curve from a 'K2SFF' ascii file. The default aperture
+    light curve data of this product are not strictly 'comma-separated' and 
+    lead to crashes when opened by standard Astropy ascii I/O functions. 
+    
+    Parameters
+    ----------
+    filename : str
+        file name of the ascii file containing the photometry
+    
+    Returns
+    -------
+    filename : str
+        The filename serves as a unique identifier for the object
+    photometry : Astropy table
+        Columns contain time, flux 
+        
+    Example
+    -------
+    >>> filename = 'tests/220132548'
+    >>> filename, photometry = open_k2sff(filename)
+    """
+    with open(filename, 'r') as infile:
+        photometry = Table(names = ('TIME', 'FLUX'))
+        lines = infile.readlines()  
+        for line in lines[1:]:
+            # strip trailing comma and '\n' and save to a table
+            line = line.rstrip(',\n')
+            line = line.split(',')
+            photometry.add_row(line)
+
+    # remove nans
+    photometry = photometry[~np.isnan(photometry['FLUX'])]   
+    return filename.split('/')[-1], photometry
+    
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+    
