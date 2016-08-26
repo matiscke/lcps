@@ -43,8 +43,8 @@ Notation
 --------
 Here's how *lcps* is commanded from the shell::
 
-   $ lcps_batch.py [-h] [--logfile LOGFILE] [--winSize WINSIZE]
-                        [--stepSize STEPSIZE] [--Nneighb NNEIGHB]
-                        [--minDur MINDUR] [--maxDur MAXDUR]
-                        [--detectionThresh DETECTIONTHRESH]
-                        path
+   $ python lcps_batch.py [-h] [--logfile LOGFILE] [--winSize WINSIZE]
+                               [--stepSize STEPSIZE] [--Nneighb NNEIGHB]
+                               [--minDur MINDUR] [--maxDur MAXDUR]
+                               [--detectionThresh DETECTIONTHRESH]
+                               path
