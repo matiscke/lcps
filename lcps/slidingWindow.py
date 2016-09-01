@@ -211,4 +211,3 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-    

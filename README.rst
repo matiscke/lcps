@@ -30,7 +30,9 @@ After unpacking the package, go to its root directory and run the setup script:
 
 Usage Example
 -------------
-python lcps_batch.py /KeplerData/C7/ --logfile /KeplerData/C7/lcps_long+deep01.log --winSize 700 --stepSize 20 --minDur 20 --maxDur 698 --detectionThresh 0.90
+::
+
+  $ python lcps_batch.py /KeplerData/C7/ --logfile /KeplerData/C7/lcps_long+deep01.log --winSize 700 --stepSize 20 --minDur 20 --maxDur 698 --detectionThresh 0.90
 
 
 Documentation
