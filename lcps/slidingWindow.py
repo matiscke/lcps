@@ -48,8 +48,8 @@ def get_localMedian(flux, iWinStart, winSize, Nneighb=1):
     # construct neighborhood without current window        
     iMin = max(0, iWinStart - Nneighb*winSize)
     iMax = min(len(flux), iWinStart + (1 + Nneighb)*winSize)
-    neighborhood = np.append(flux[iMin:iWinStart],\
-        flux[iWinStart + winSize:iMax + 1])
+    neighborhood = np.append(flux[iMin:iWinStart],
+        flux[iWinStart + winSize:iMax])
     
     # compute median and MAD of neighborhood
     localMedian = np.median(neighborhood)
@@ -57,7 +57,7 @@ def get_localMedian(flux, iWinStart, winSize, Nneighb=1):
     return localMedian, MAD
 
 
-def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00,\
+def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00,
         localMAD=0.01, detectionThresh=0.995):
     """ Search for negative deviations, i.e. dips, in an array.
     
