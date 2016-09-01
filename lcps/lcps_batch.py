@@ -93,7 +93,7 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
             try:
                 EPICno, photometry = open_k2sff(path + file)
             except:
-                warnings.warn('Cannot open file ``{}''.'.format(file))
+                warnings.warn('Cannot open the file "{}"'.format(file))
                 continue         
         log.info('Scanning target {}/{}: EPIC {}'.format(i + 1,\
             len(filelist),EPICno))

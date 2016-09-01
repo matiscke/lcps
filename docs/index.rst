@@ -14,12 +14,24 @@ lcps uses a **sliding window** technique to compare a section of flux time serie
 
 Installation
 ------------
-The latest version of lcps can be downloaded from github or installed from PyPI via ::
 
+pip
+^^^
+
+The easiest and recommended way of installing lcps is via pip. To install the latest released version of lcps from PyPI::
 
    $ pip install lcps
 
+From Source
+^^^^^^^^^^^
 
+If you prefer to use the most current development version, you can download lcps from `GitHub <https://github.com/matiscke/lcps>`_.
+
+After unpacking the package, go to its root directory and run the setup script:
+::
+
+   $ sudo python setup.py install
+   
 
 Quick Start Guide
 -----------------

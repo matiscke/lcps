@@ -8,7 +8,7 @@ technique, as well as additional helper functions.
 import numpy as np
 from astropy.table import Table
 
-def get_localMedian(flux, iWinStart, winSize, Nneighb):
+def get_localMedian(flux, iWinStart, winSize, Nneighb=1):
     """ Find the local median and MAD of fluxes, ignoring the current window.
     
     get_localMedian computes the median flux and the median absolute deviation
