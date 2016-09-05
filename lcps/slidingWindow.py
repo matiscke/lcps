@@ -92,8 +92,8 @@ def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00,
         
     Example
     -------
-    >>> timeWindow = np.array([0.,1.,2.,3.,4.,5.])
-    >>> fluxWindow = np.array([1.00,1.01,0.99,0.80,0.75,0.95])
+    >>> timeWindow = np.array([0.,1.,2.,3.,4.,5., 6.])
+    >>> fluxWindow = np.array([1.00,1.01,0.99,0.80,0.75,0.95,0.96])
     >>> findDip(timeWindow, fluxWindow, detectionThresh=0.90)
     (5.0, 0.75)
     """
@@ -103,19 +103,34 @@ def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00,
     if len(fluxWindow[fluxWindow < fluxThresh]) >= minDur:
         # There are low fluxes, check for coherence
             NloFlux = 0
+            highFlux = False
             for i, flux in enumerate(fluxWindow):
                 if flux < fluxThresh:
+                    highFlux = False
                     NloFlux += 1
-                else:                    
-                    # End of dip, check if length falls between limits
-                    if minDur <= NloFlux <= maxDur:
-                        # return time of egress and min. flux rel. to median
-                        return timeWindow[i], \
-                            np.min(fluxWindow[:i])/localMedian
+                elif NloFlux:                   
+                    # value above threshold after a dip
+                    if highFlux:
+                        """ outlier handling: End of dip is only detected if 
+                        the previous flux data point was above the threshold,
+                        too ('highFlux' flag).
+                        """
+                        # check if length falls between limits
+                        if minDur <= NloFlux <= maxDur:
+                            # return time of egress and min. flux rel. to median
+                            return t_egress, f_rel
+                        else:
+                            # look for additional dips in the window
+                            NloFlux = 0
+                            highFlux = False
+                            continue   
                     else:
-                        # look for additional dips in the window
-                        NloFlux = 0
-                        continue    
+                        # first high flux after a dip (could be an outlier!)
+                        highFlux = True
+                        t_egress = timeWindow[i]
+                        f_rel = np.min(fluxWindow[:i])/localMedian
+                        continue
+            
     # No dips found
     return None, None
 
@@ -206,7 +221,6 @@ def dipsearch(EPICno, photometry, winSize=10, stepSize=1, Nneighb=2, minDur=2, m
                 dips.add_row([EPICno, t_egress, minFlux])
                 prev_t_egress = t_egress
     return dips
-  
   
 if __name__ == "__main__":
     import doctest
