@@ -73,7 +73,7 @@ def batchjob(path, logfile='./dips.log', winSize=10, stepSize=1,\
     INFO: Dips detected in 1 light curves. [__main__]
     INFO: Scanning target 2/2: EPIC 205919993 [__main__]
     INFO: Dips detected in 2 light curves. [__main__]
-    INFO: 16 dips found in 2 light curves. [__main__]
+    INFO: 17 dips found in 2 light curves. [__main__]
     """
     filelist = sorted([file for file in os.listdir(path)])
     candidates = Table(names=('EPIC','t_egress','minFlux'),\
