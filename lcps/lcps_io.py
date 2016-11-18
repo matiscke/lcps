@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Auxiliary functions for light curve file handling. 
 
-For now, contains only a function "open_fits" to extract the Kepler PDCSAP 
-light curve from a FITS file.
+Contains functions to extract Kepler PDCSAP and user-provided K2SFF light 
+curves.
 """
 
 import numpy as np

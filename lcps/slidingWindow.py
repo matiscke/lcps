@@ -59,7 +59,7 @@ def get_localMedian(flux, iWinStart, winSize, Nneighb=1):
 
 def findDip(timeWindow, fluxWindow, minDur=1, maxDur=5, localMedian=1.00,
         localMAD=0.01, detectionThresh=0.995):
-    """ Search for negative deviations, i.e. dips, in an array.
+    """ Search for negative excursions (dips) in an array.
     
     findDip counts the number of entries in fluxWindow that fall short of a 
     threshold in relative flux specified in detectionThresh. If this number
