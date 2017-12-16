@@ -52,7 +52,7 @@ Usage
 
 Copyright and License
 ---------------------
-Copyright 2016 Martin Schlecker
+Copyright 2017 Martin Schlecker
 
 lcps is free software made available under the MIT License.
 
