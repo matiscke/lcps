@@ -50,12 +50,12 @@ Usage
   usage.rst
   
 
-Copyright and License
----------------------
-Copyright 2017 Martin Schlecker
-
+License and Attribution
+-----------------------
+Copyright 2018 Martin Schlecker
 lcps is free software made available under the MIT License.
 
+If you make use of this package in your scientific work, please acknowledge my work by citing `Schlecker, 2016 <https://zenodo.org/record/221659#.Wutd_oAiEQ8>`_.
 
 
 Module Reference
