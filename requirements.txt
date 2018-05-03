@@ -1,0 +1,4 @@
+name: lcps
+
+dependencies:
+  - sphinx<=1.5.6
