@@ -3,6 +3,8 @@ lcps (light curve pre-selection)
 
 **A tool to search for dips in photometric time series**
 
+<a href="http://ascl.net/1805.003"><img src="https://img.shields.io/badge/ascl-1805.003-blue.svg?colorB=262255" alt="ascl:1805.003" /></a>
+
 lcps searches for transit-like features in light curve files.
 
 
